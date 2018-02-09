@@ -1,2 +1,6 @@
-# micro
-Sistemas Basados en Microprocesadores 2017/2018
+# Sistemas Basados en Microprocesadores
+Proyecto 2017/2018
+
+### Autores
+* [Adrián Fernández Amador](https://github.com/adrian-fernandez-amador)
+* [Aitor Arnaiz del Val](https://github.com/atOr97)
