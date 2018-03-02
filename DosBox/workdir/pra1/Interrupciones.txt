@@ -1,0 +1,14 @@
+INT 21h realiza la interrupcion con codigo de operacion guardado en AH:
+	AH=4CH -> exit
+	AH=02H -> printf("%c") caracter en DL
+	AH=09H -> printf("%s") cadena en DS DX (terminada en '$')
+	AH=0AH -> scanf("%s") cadena en DS DX
+
+Para leer un buffer:
+	En la posicion 0 escribimos el numero maximo de caracteres de la cadena.
+	En la posicion 1 guardamos el numero de caracteres leidos.
+	Despues de la cadena hay que escribir '$' para que termine de leer.
+
+Secuencias de escape:
+	\[2J -> limpia la pantalla
+	\[x;yf -> escribe caracter en (x,y) 

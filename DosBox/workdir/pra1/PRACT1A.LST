@@ -1,0 +1,95 @@
+Turbo Assembler	 Version 2.0	    03/02/18 17:37:31	    Page 1
+pract1a.asm
+
+
+
+      1				     ;_______________________________________________________________
+      2				     ; DEFINICION DEL SEGMENTO DE DATOS
+      3	0000			     DATOS SEGMENT
+      4
+      5	0000			     DATOS ENDS
+      6				     ;_______________________________________________________________
+      7				     ; DEFINICION DEL SEGMENTO DE PILA
+      8	0000			     PILA SEGMENT STACK	"STACK"
+      9	0000  40*(00)			     DB	40H DUP	(0)
+     10	0040			     PILA ENDS
+     11				     ;_______________________________________________________________
+     12				     ; DEFINICION DEL SEGMENTO EXTRA
+     13	0000			     EXTRA SEGMENT
+     14
+     15	0000			     EXTRA ENDS
+     16				     ;_______________________________________________________________
+     17				     ; DEFINICION DEL SEGMENTO DE CODIGO
+     18	0000			     CODE SEGMENT
+     19				     ASSUME CS:CODE,DS:DATOS,ES:EXTRA,SS:PILA
+     20				     ;_______________________________________________________________
+     21				     ; COMIENZO	DEL PROCEDIMIENTO PRINCIPAL (START)
+     22	0000			     START PROC
+     23				     ;INICIALIZA LOS REGISTROS DE SEGMENTO CON SUS VALORES
+     24	0000  B8 0000s			 MOV AX, DATOS
+     25	0003  8E D8			 MOV DS, AX
+     26
+     27	0005  B8 0000s			     MOV AX, EXTRA
+     28	0008  8E C0			 MOV ES, AX
+     29
+     30	000A  B8 0000s			 MOV AX, PILA
+     31	000D  8E D0			 MOV SS, AX
+     32
+     33				     ;INICIALIZACION DE	LOS REGISTROS
+     34	000F  B8 0015			     MOV AX, 15H
+     35	0012  BB 00BB			     MOV BX, 0BBH
+     36	0015  B9 3412			     MOV CX, 3412H
+     37	0018  8B D1			     MOV DX, CX
+     38
+     39				     ;PREPARACION DE ES	PARA CARGAR DESDE MEMORIA
+     40	001A  BA 0006			     MOV DX, 6H
+     41	001D  8E C2			     MOV ES, DX
+     42	001F  26: 8A 1E	5636		     MOV BL, ES:[5636H]
+     43
+     44	0024  26: 8A 3E	5637		     MOV BH, ES:[5637H]
+     45
+     46				     ;PREPARACION DE ES	PARA ESCRIBIR EN MEMORIA
+     47	0029  BA 0005			     MOV DX, 5H
+     48	002C  8E C2			     MOV ES, DX
+     49	002E  26: 88 2E	0005		     MOV ES:[5H], CH
+     50
+     51	0033  26: 8B 05			     MOV AX, ES:[DI]
+     52
+     53	0036  8E C5			     MOV ES, BP
+     54	0038  26: 8B 1E	0010		     MOV BX, ES:[10H]
+     55
+     56	003D			     START ENDP
+     57				     ;FIN DEL SEGMENTO DE CODIGO
+Turbo Assembler	 Version 2.0	    03/02/18 17:37:31	    Page 2
+pract1a.asm
+
+
+
+     58	003D			     CODE ENDS
+     59				     ;FIN DE PROGRAMA INDICANDO	DONDE COMIENZA LA EJECUCION
+     60				     END START
+Turbo Assembler	 Version 2.0	    03/02/18 17:37:31	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "03/02/18"
+??FILENAME			  Text	 "pract1a "
+??TIME				  Text	 "17:37:31"
+??VERSION			  Number 0200
+@CPU				  Text	 0101H
+@CURSEG				  Text	 CODE
+@FILENAME			  Text	 PRACT1A
+@WORDSIZE			  Text	 2
+START				  Near	 CODE:0000
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  003D Para	  none
+DATOS				  16  0000 Para	  none
+EXTRA				  16  0000 Para	  none
+PILA				  16  0040 Para	  Stack	  STACK
+

@@ -1,0 +1,112 @@
+Turbo Assembler	 Version 2.0	    03/02/18 18:08:01	    Page 1
+pract1b.asm
+
+
+
+      1				     ;_______________________________________________________________
+      2				     ; DEFINICION DEL SEGMENTO DE DATOS
+      3	0000			     DATOS SEGMENT
+      4	0000  0000			     CONTADOR DW 0
+      5	0002  0000CAFE			     TOME DD 0CAFEH
+      6	0006  64*(0000)			     TABLA100 DW 100 DUP (0)
+      7	00CE  41 74 65 6E 63 69	C3+	     ERROR1 DB "Atención: Entrada de datos incorrecta."
+      8	      B3 6E 3A 20 45 6E	74+
+      9	      72 61 64 61 20 64	65+
+     10	      20 64 61 74 6F 73	20+
+     11	      69 6E 63 6F 72 72	65+
+     12	      63 74 61 2E
+     13	00F5			     DATOS ENDS
+     14				     ;_______________________________________________________________
+     15				     ; DEFINICION DEL SEGMENTO DE PILA
+     16	0000			     PILA SEGMENT STACK	"STACK"
+     17	0000  40*(00)			     DB	40H DUP	(0)
+     18	0040			     PILA ENDS
+     19				     ;_______________________________________________________________
+     20				     ; DEFINICION DEL SEGMENTO EXTRA
+     21	0000			     EXTRA SEGMENT
+     22
+     23	0000			     EXTRA ENDS
+     24				     ;_______________________________________________________________
+     25				     ; DEFINICION DEL SEGMENTO DE CODIGO
+     26	0000			     CODE SEGMENT
+     27				     ASSUME CS:CODE,DS:DATOS,ES:EXTRA,SS:PILA
+     28				     ;_______________________________________________________________
+     29				     ; COMIENZO	DEL PROCEDIMIENTO PRINCIPAL (START)
+     30	0000			     START PROC
+     31				     ;INICIALIZA LOS REGISTROS DE SEGMENTO CON SUS VALORES
+     32	0000  B8 0000s			 MOV AX, DATOS
+     33	0003  8E D8			 MOV DS, AX
+     34
+     35	0005  B8 0000s			     MOV AX, EXTRA
+     36	0008  8E C0			 MOV ES, AX
+     37
+     38	000A  B8 0000s			 MOV AX, PILA
+     39	000D  8E D0			 MOV SS, AX
+     40
+     41				     ;GUARDAMOS	EL SEXTO CARACTER EN AL
+     42	000F  B9 00CEr			     MOV CX, OFFSET ERROR1
+     43	0012  83 C1 05			     ADD CX, 5
+     44	0015  8B E9			     MOV BP, CX
+     45	0017  3E: 8A 46	00		     MOV AL, DS:[BP]
+     46
+     47				     ;GUARDAMOS	EL VALOR EN TABLA100
+     48	001B  BA 0006r			     MOV DX, OFFSET TABLA100
+     49	001E  83 C2 63			     ADD DX, 63H
+     50	0021  8B EA			     MOV BP, DX
+     51	0023  3E: 88 46	00		     MOV DS:[BP], AL
+     52
+     53				     ;EXTRAEMOS	EL VALOR DE TOME
+     54	0027  BB 0002r			     MOV BX, OFFSET TOME
+     55	002A  8B EB			     MOV BP, BX
+     56	002C  3E: 8B 46	00		     MOV AX, DS:[BP]
+     57
+Turbo Assembler	 Version 2.0	    03/02/18 18:08:01	    Page 2
+pract1b.asm
+
+
+
+     58				     ;GUARDAMOS	EL VALOR EN TABLA100
+     59	0030  B9 0006r			     MOV CX, OFFSET TABLA100
+     60	0033  83 C1 23			     ADD CX, 23H
+     61	0036  8B E9			     MOV BP, CX
+     62	0038  3E: 89 46	00		     MOV DS:[BP], AX
+     63
+     64				     ;GUARDAMOS	EL BYTE	MAS SIGNIFICATIVO EN CONTADOR
+     65	003C  B9 0000r			     MOV CX, OFFSET CONTADOR
+     66	003F  8B E9			     MOV BP, CX
+     67	0041  3E: 88 66	00		     MOV DS:[BP], AH
+     68
+     69	0045			     START ENDP
+     70				     ;FIN DEL SEGMENTO DE CODIGO
+     71	0045			     CODE ENDS
+     72				     ;FIN DE PROGRAMA INDICANDO	DONDE COMIENZA LA EJECUCION
+     73				     END START
+Turbo Assembler	 Version 2.0	    03/02/18 18:08:01	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "03/02/18"
+??FILENAME			  Text	 "pract1b "
+??TIME				  Text	 "18:08:01"
+??VERSION			  Number 0200
+@CPU				  Text	 0101H
+@CURSEG				  Text	 CODE
+@FILENAME			  Text	 PRACT1B
+@WORDSIZE			  Text	 2
+CONTADOR			  Word	 DATOS:0000
+ERROR1				  Byte	 DATOS:00CE
+START				  Near	 CODE:0000
+TABLA100			  Word	 DATOS:0006
+TOME				  Dword	 DATOS:0002
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  0045 Para	  none
+DATOS				  16  00F5 Para	  none
+EXTRA				  16  0000 Para	  none
+PILA				  16  0040 Para	  Stack	  STACK
+
