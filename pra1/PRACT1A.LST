@@ -1,4 +1,4 @@
-Turbo Assembler	 Version 2.0	    03/09/18 15:44:32	    Page 1
+Turbo Assembler	 Version 2.0	    03/09/18 16:44:29	    Page 1
 pract1a.asm
 
 
@@ -55,19 +55,19 @@ pract1a.asm
      50
      51	0033  8B 05			     MOV AX, [DI]
      52
-     53	0035  8B 5E 00			     MOV BX, [BP]
+     53	0035  8B 5E 10			     MOV BX, [BP + 10H]
      54
      55	0038			     START ENDP
      56				     ;FIN DEL SEGMENTO DE CODIGO
      57	0038			     CODE ENDS
-Turbo Assembler	 Version 2.0	    03/09/18 15:44:32	    Page 2
+Turbo Assembler	 Version 2.0	    03/09/18 16:44:29	    Page 2
 pract1a.asm
 
 
 
      58				     ;FIN DE PROGRAMA INDICANDO	DONDE COMIENZA LA EJECUCION
      59				     END START
-Turbo Assembler	 Version 2.0	    03/09/18 15:44:32	    Page 3
+Turbo Assembler	 Version 2.0	    03/09/18 16:44:29	    Page 3
 Symbol Table
 
 
@@ -77,7 +77,7 @@ Symbol Name			  Type	 Value
 
 ??DATE				  Text	 "03/09/18"
 ??FILENAME			  Text	 "pract1a "
-??TIME				  Text	 "15:44:32"
+??TIME				  Text	 "16:44:29"
 ??VERSION			  Number 0200
 @CPU				  Text	 0101H
 @CURSEG				  Text	 CODE
