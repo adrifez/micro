@@ -1,0 +1,79 @@
+Turbo Assembler	 Version 2.0	    03/09/18 16:28:34	    Page 1
+pract1c.asm
+
+
+
+      1				     ;_______________________________________________________________
+      2				     ; DEFINICION DEL SEGMENTO DE DATOS
+      3	0000			     DATOS SEGMENT
+      4
+      5	0000			     DATOS ENDS
+      6				     ;_______________________________________________________________
+      7				     ; DEFINICION DEL SEGMENTO DE PILA
+      8	0000			     PILA SEGMENT STACK	"STACK"
+      9	0000  40*(00)			     DB	40H DUP	(0)
+     10	0040			     PILA ENDS
+     11				     ;_______________________________________________________________
+     12				     ; DEFINICION DEL SEGMENTO EXTRA
+     13	0000			     EXTRA SEGMENT
+     14
+     15	0000			     EXTRA ENDS
+     16				     ;_______________________________________________________________
+     17				     ; DEFINICION DEL SEGMENTO DE CODIGO
+     18	0000			     CODE SEGMENT
+     19				     ASSUME CS:CODE,DS:DATOS,ES:EXTRA,SS:PILA
+     20				     ;_______________________________________________________________
+     21				     ; COMIENZO	DEL PROCEDIMIENTO PRINCIPAL (START)
+     22	0000			     START PROC
+     23				     ;INICIALIZA LOS REGISTROS DE SEGMENTO CON SUS VALORES
+     24	0000  B8 0000s			 MOV AX, DATOS
+     25	0003  8E D8			 MOV DS, AX
+     26
+     27	0005  B8 0000s			     MOV AX, EXTRA
+     28	0008  8E C0			 MOV ES, AX
+     29
+     30	000A  B8 0000s			 MOV AX, PILA
+     31	000D  8E D0			 MOV SS, AX
+     32
+     33				     ;INICIALIZACION DE	LOS REGISTROS
+     34	000F  B9 0535			     MOV CX, 0535H
+     35	0012  8E D9			     MOV DS, CX
+     36	0014  BB 0210			     MOV BX, 0210H
+     37	0017  B9 1011			     MOV CX, 1011H
+     38	001A  8B F9			     MOV DI, CX
+     39
+     40				     ;PROGRAMA
+     41	001C  A0 1234			     MOV AL, DS:[1234H]	; Guarda en AL el contenido de 5350H + 1234H
+     42	001F  8B 07			     MOV AX, [BX] ; Guarda en AX el contenido de 5350H + 0210H
+     43	0021  88 05			     MOV [DI], AL ; Guarda en la dir. 5350H + 1011H el contenido de AL
+     44
+     45	0023			     START ENDP
+     46				     ;FIN DEL SEGMENTO DE CODIGO
+     47	0023			     CODE ENDS
+     48				     ;FIN DE PROGRAMA INDICANDO	DONDE COMIENZA LA EJECUCION
+     49				     END START
+Turbo Assembler	 Version 2.0	    03/09/18 16:28:34	    Page 2
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "03/09/18"
+??FILENAME			  Text	 "pract1c "
+??TIME				  Text	 "16:28:34"
+??VERSION			  Number 0200
+@CPU				  Text	 0101H
+@CURSEG				  Text	 CODE
+@FILENAME			  Text	 PRACT1C
+@WORDSIZE			  Text	 2
+START				  Near	 CODE:0000
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  0023 Para	  none
+DATOS				  16  0000 Para	  none
+EXTRA				  16  0000 Para	  none
+PILA				  16  0040 Para	  Stack	  STACK
+
