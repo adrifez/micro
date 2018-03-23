@@ -8,7 +8,8 @@
 ;_______________________________________________________________
 ; DEFINICION DEL SEGMENTO DE DATOS
 DATOS SEGMENT
-	
+	CONTADOR DW 0
+	IMPRIMIR DW 17 DUP (0)
 DATOS ENDS
 ;_______________________________________________________________
 ; DEFINICION DEL SEGMENTO DE PILA
@@ -25,6 +26,40 @@ EXTRA ENDS
 CODE SEGMENT
 ASSUME CS:CODE,DS:DATOS,ES:EXTRA,SS:PILA
 ;_______________________________________________________________
+;COMIENZO DEL PROGRAMA 
+printASCII PROC NEAR
+	MOV AX, BX
+	MOV BX, 10
+	MOV DX, 0H		
+	MOV SI, 0
+jump:	DIV BX
+	MOV CX, DX
+	ADD CX, 48
+	
+	PUSH CX
+	
+	MOV DX, CONTADOR
+	INC DX
+	MOV CONTADOR, DX
+	MOV DX, 0H
+	
+	CMP AX, 0H
+	JNZ jump
+	
+	MOV SI, 0
+	MOV AX, OFFSET RES
+jump2:	POP CX
+	MOV RES[SI], CL
+	INC SI
+	CMP SI, CONTADOR
+	JNZ jump2
+	MOV RES[SI], 36
+	
+	MOV DX, ES
+	RET
+printASCII ENDP
+;FIN DEL PROGRAMA 
+;_______________________________________________________________
 ; COMIENZO DEL PROCEDIMIENTO PRINCIPAL (START)
 START PROC
 	;INICIALIZA LOS REGISTROS DE SEGMENTO CON SUS VALORES 
@@ -38,29 +73,27 @@ START PROC
 	MOV SS, AX
 	MOV SP, 64
 	;FIN DE LAS INICIALIZACIONES
+	
+	
+	MOV BX, 1234
+	CALL printASCII
+	
+	MOV SI, 0H
+	MOV BX, OFFSET IMPRIMIR
+	MOV ES, DX
 
-	;COMIENZO DEL PROGRAMA 
-	printASCII PROC FAR
-		MOV AX, BX
-		MOV BX, 10
-		MOV DX, 0
-jump:	DIV BX
-		MOV CH, AH
-		ADD CH, 48
-		
-		MOV RES[DX], CH
-		INC DX
-		
-		CMP AH, 0
-		MOV AH, 0
-		JNZ jump
-		
-		MOV RES[DX], 36
-		
-		MOV CX, ES
-		MOV AX, OFFSET RES
-	printASCII ENDP
-	;FIN DEL PROGRAMA 
+	MOV BP, AX
+jump3: ADD BP, SI 
+	MOV CX, ES:[BP]
+	MOV IMPRIMIR[SI], CX
+	INC SI
+	CMP CX, 36
+	JNZ jump3
+	
+	;IMPRIMIMOS EL RESULTADO POR PANTALLA
+	MOV AH,9
+	MOV DX, BX
+	INT 21H
 	
 	MOV AX, 4C00H
 	INT 21H
