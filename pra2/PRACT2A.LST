@@ -1,0 +1,119 @@
+Turbo Assembler	 Version 2.0	    03/21/18 15:20:03	    Page 1
+pract2a.asm
+
+
+
+      1				     ;_______________________________________________________________
+      2				     ; Autores:	Adrián	Fernández Amador
+      3				     ;		Aitor Arnaiz del Val
+      4				     ;
+      5				     ; Pareja: 11
+      6				     ;_______________________________________________________________
+      7
+      8				     ;_______________________________________________________________
+      9				     ; DEFINICION DEL SEGMENTO DE DATOS
+     10	0000			     DATOS SEGMENT
+     11
+     12	0000			     DATOS ENDS
+     13				     ;_______________________________________________________________
+     14				     ; DEFINICION DEL SEGMENTO DE PILA
+     15	0000			     PILA SEGMENT STACK	"STACK"
+     16	0000  40*(00)			     DB	40H DUP	(0)
+     17	0040			     PILA ENDS
+     18				     ;_______________________________________________________________
+     19				     ; DEFINICION DEL SEGMENTO EXTRA
+     20	0000			     EXTRA SEGMENT
+     21	0000  10*(00)			     RES DB 16 DUP (0)
+     22	0010			     EXTRA ENDS
+     23				     ;_______________________________________________________________
+     24				     ; DEFINICION DEL SEGMENTO DE CODIGO
+     25	0000			     CODE SEGMENT
+     26				     ASSUME CS:CODE,DS:DATOS,ES:EXTRA,SS:PILA
+     27				     ;_______________________________________________________________
+     28				     ; COMIENZO	DEL PROCEDIMIENTO PRINCIPAL (START)
+     29	0000			     START PROC
+     30					     ;INICIALIZA LOS REGISTROS DE SEGMENTO CON SUS VALORES
+     31	0000  B8 0000s			     MOV AX, DATOS
+     32	0003  8E D8			     MOV DS, AX
+     33
+     34	0005  B8 0000s			     MOV AX, EXTRA
+     35	0008  8E C0			     MOV ES, AX
+     36
+     37	000A  B8 0000s			     MOV AX, PILA
+     38	000D  8E D0			     MOV SS, AX
+     39	000F  BC 0040			     MOV SP, 64
+     40					     ;FIN DE LAS INICIALIZACIONES
+     41
+     42					     ;COMIENZO DEL PROGRAMA
+     43	0012				     printASCII	PROC FAR
+     44	0012  8B C3				     MOV AX, BX
+     45	0014  BB 000A				     MOV BX, 10
+     46	0017  BA 0000				     MOV DX, 0
+     47	001A  F7 F3		     jump:   DIV BX
+     48	001C  8A EC				     MOV CH, AH
+     49	001E  80 C5 30				     ADD CH, 48
+     50
+     51	0021  26: 88				     MOV ES:[DX	+ RES],	CH
+**Error** pract2a.asm(51) Illegal indexing mode
+     52	0023  42				     INC DX
+     53
+     54	0024  80 FC 00				     CMP AH, 0
+     55	0027  B4 00				     MOV AH, 0
+     56	0029  75 EF				     JNZ jump
+Turbo Assembler	 Version 2.0	    03/21/18 15:20:03	    Page 2
+pract2a.asm
+
+
+
+     57
+     58	002B  26: C6 24				     MOV RES[DX], 36
+**Error** pract2a.asm(58) Illegal indexing mode
+     59
+     60	002E  8C C1				     MOV CX, ES
+     61	0030  B8 0000r				     MOV AX, OFFSET RES
+     62	0033				     printASCII	ENDP
+     63					     ;FIN DEL PROGRAMA
+     64
+     65	0033  B8 4C00			     MOV AX, 4C00H
+     66	0036  CD 21			     INT 21H
+     67
+     68	0038			     START ENDP
+     69				     ;FIN DEL SEGMENTO DE CODIGO
+     70	0038			     CODE ENDS
+     71				     ;FIN DE PROGRAMA INDICANDO	DONDE COMIENZA LA EJECUCION
+     72				     END START
+Turbo Assembler	 Version 2.0	    03/21/18 15:20:03	    Page 3
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "03/21/18"
+??FILENAME			  Text	 "pract2a "
+??TIME				  Text	 "15:20:03"
+??VERSION			  Number 0200
+@CPU				  Text	 0101H
+@CURSEG				  Text	 CODE
+@FILENAME			  Text	 PRACT2A
+@WORDSIZE			  Text	 2
+JUMP				  Near	 CODE:001A
+PRINTASCII			  Far	 CODE:0012
+RES				  Byte	 EXTRA:0000
+START				  Near	 CODE:0000
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+CODE				  16  0038 Para	  none
+DATOS				  16  0000 Para	  none
+EXTRA				  16  0010 Para	  none
+PILA				  16  0040 Para	  Stack	  STACK
+Turbo Assembler	 Version 2.0	    03/21/18 15:20:03	    Page 4
+Error Summary
+
+
+
+**Error** pract2a.asm(51) Illegal indexing mode
+**Error** pract2a.asm(58) Illegal indexing mode
+
