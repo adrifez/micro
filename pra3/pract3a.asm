@@ -1,0 +1,6 @@
+<nombre módulo> SEGMENT BYTE PUBLIC 'CODE'
+ASSUME CS: <nombre módulo>
+…
+…
+<nombre módulo> ENDS
+END
