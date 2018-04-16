@@ -1,6 +1,6 @@
 _pract3a SEGMENT BYTE PUBLIC 'CODE'
 ASSUME CS: _pract3a
-PUBLIC: _comprobarNumeroSecreto, _rellenarIntento
+PUBLIC _comprobarNumeroSecreto, _rellenarIntento
 ; --------------------------------
 ; COMIENZO DE PRIMERA RUTINA
 _comprobarNumeroSecreto PROC FAR
@@ -59,25 +59,29 @@ _rellenarIntento PROC FAR
 	PUSH ES
 	PUSH SI
 	PUSH BX
+	PUSH DX
 	
 	; OBTENEMOS LOS ARGUMENTOS DE LA PILA
+	MOV DX, 0H
 	MOV AX, [BP + 6]
 	
 	MOV SI, [BP + 8]
 	MOV ES, [BP + 10]
 	
 	; DIVIDIMOS ENTRE 10
-	MOV BL, 10
-dividir: DIV BL
+	MOV BX, 10
+	ADD SI, 3
+dividir: DIV BX
 	; GUARDAMOS EN LA PILA
-	MOV ES:[SI], AH
-	ADD SI, 1
+	MOV ES:[SI], DL
+	MOV DX, 0H
+	SUB SI, 1
 	; PARAMOS CUANDO EL COCIENTE ES 0
-	MOV AH, 0H
 	CMP AX, 0H
 	JNE dividir
 	
 	; SACAMOS DE LA PILA
+	POP DX
 	POP BX
 	POP SI
 	POP ES
