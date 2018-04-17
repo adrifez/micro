@@ -31,7 +31,6 @@ int main( void )
 	} while (repetido == TRUE);
 	
 	numIntentos = 0;
-	printf("%u %u %u %u\n", numSecreto[0], numSecreto[1], numSecreto[2], numSecreto[3]);
 
 	do {
 		numIntentos++;
@@ -41,7 +40,6 @@ int main( void )
 		} while (intento > 9999);
 		
 		rellenarIntento( intento, intentoDigitos );
-		printf("%u %u %u %u\n", intentoDigitos[0], intentoDigitos[1], intentoDigitos[2], intentoDigitos[3]);
 		aciertos = calcularAciertos(numSecreto, intentoDigitos);
 		semiaciertos = calcularSemiaciertos(numSecreto, intentoDigitos);
 		printf("Numero de Aciertos: %u\t", aciertos);

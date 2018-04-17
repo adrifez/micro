@@ -13,10 +13,8 @@ pract3b.obj: pract3b.asm
 	tasm /zi /ml pract3b,,pract3b
 
 clean:
-	del	pract3a.map
 	del pract3a.lst
 	del pract3a.obj
-	del	pract3b.map
 	del pract3b.lst
 	del pract3b.obj
 	del pract3.obj
