@@ -9,7 +9,7 @@
 DATOS SEGMENT
 	linefeed db 13, 10, "$"
 	msg db "MENSAJEACODIFICAR$"
-	cmsg dc "ASBGOXSOQCRWTWQOF$"
+	cmsg db "ASBGOXSOQCRWTWQOF$"
 	text1 db "Mensaje original:$"
 	text2 db "Codificacion del mensaje:$"
 	text3 db "Reversion de la codificacion:$"
