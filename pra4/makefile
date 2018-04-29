@@ -1,23 +1,23 @@
-all: pract3.exe
+all: p4a.com p4b.exe
 
-pract3.exe: pract3.obj pract3a.obj pract3b.obj
-	tcc -v -ml -Lc:\compila\tc\lib pract3.obj pract3a.obj pract3b.obj
-
-pract3.obj: pract3.c
-	tcc -c -v -ml -Ic:\compila\tc\include pract3.c
-
-pract3a.obj: pract3a.asm
-	tasm /zi /ml pract3a,,pract3a
-
-pract3b.obj: pract3b.asm
-	tasm /zi /ml pract3b,,pract3b
+p4a.com: p4a.obj
+	tlink /t p4a
+	
+p4a.obj: p4a.asm 
+	tasm /zi p4a.asm,,p4a.lst
+	
+p4b.exe: p4b.obj
+	tlink /v p4b
+	
+p4b.obj: p4b.asm 
+	tasm /zi p4b.asm,,p4b.lst
 
 clean:
-	del	pract3a.map
-	del pract3a.lst
-	del pract3a.obj
-	del	pract3b.map
-	del pract3b.lst
-	del pract3b.obj
-	del pract3.obj
-	del pract3.exe
+	del p4a.obj
+	del	p4a.map
+	del p4a.lst
+	del p4a.com
+	del p4b.obj
+	del p4b.map
+	del p4b.lst
+	del p4b.exe

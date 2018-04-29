@@ -1,43 +1,87 @@
-_codigo_rutinas segment byte public
-	assume cs:_codigo_rutinas
+; Autores: Adrián Fernández Amador
+;          Aitor Arnaiz del Val
+;
+; Pareja: 11
+;_______________________________________________________________
+
+;_______________________________________________________________
+; DEFINICION DEL SEGMENTO DE DATOS
+DATOS SEGMENT
+	linefeed db 13, 10, "$"
+	msg db "MENSAJEACODIFICAR$"
+	cmsg dc "ASBGOXSOQCRWTWQOF$"
+	text1 db "Mensaje original:$"
+	text2 db "Codificacion del mensaje:$"
+	text3 db "Reversion de la codificacion:$"
+DATOS ENDS
+;_______________________________________________________________
+; DEFINICION DEL SEGMENTO DE PILA
+PILA SEGMENT STACK "STACK"
+	db 40h dup (0)
+PILA ENDS
+;_______________________________________________________________
+; DEFINICION DEL SEGMENTO EXTRA 
+EXTRA SEGMENT 
 	
-_DetectarDriver proc far
-	push es
-	xor ax,ax
-	mov es,ax
-	cmp word ptr es:[65h*4],0h
-	jne _detectar_int
-	cmp word ptr es:[65h*4+2],0h
-	je _detectar_nodriver
-_detectar_int:
-	mov ah,00h
-	int 65h
-	cmp ax,0F0F0h
-	jne _detectar_nodriver
-	xor ax,ax
-	jmp _detectar_fin
-_detectar_nodriver:
-	mov ax,1
-_detectar_fin:
-	pop es
-	ret
-_DetectarDriver endp
+EXTRA ENDS 
+;_______________________________________________________________
+; DEFINICION DEL SEGMENTO DE CODIGO
+CODE SEGMENT
+ASSUME CS:CODE,DS:DATOS,ES:EXTRA,SS:PILA 
+;_______________________________________________________________
+; COMIENZO DEL PROCEDIMIENTO PRINCIPAL (START)
+START PROC
+	; Inicializacion de segmentos
+	mov ax, DATOS
+	mov ds, ax
+	mov ax, EXTRA
+	mov es, ax
 
-_DesinstalarDriver proc far
-	mov ah,01h
-	int 65h
-	ret
-_DesinstalarDriver endp
-
-_Promediar proc far
-	..............
-	..............
-	..............
-_Promediar endp
-
-public _DetectarDriver
-public _DesinstalarDriver
-public _Promediar
-
-_codigo_rutinas ends
-end
+	; Imprimimos informacion por pantalla
+	mov ah, 9
+	mov dx, offset text1
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset msg
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset text2
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	
+	; Preparamos la llamada a la rutina de codificacion
+	mov ah, 11h
+	mov dx, offset msg
+	int 60h
+	; Imprimimos salto de linea
+	mov ah, 9
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	
+	; Imprimimos informacion por pantalla
+	mov ah, 9
+	mov dx, offset text3
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	
+	; Preparamos la llamada a la rutina de codificacion
+	mov ah, 12h
+	mov dx, offset cmsg
+	int 60h
+	
+	;FIN DEL PROGRAMA
+	MOV AX, 4C00H
+	INT 21H
+START ENDP
+;FIN DEL SEGMENTO DE CODIGO
+CODE ENDS
+;FIN DE PROGRAMA INDICANDO DONDE COMIENZA LA EJECUCION
+END START
