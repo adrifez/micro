@@ -1,3 +1,4 @@
+;_______________________________________________________________
 ; Autores: Adrián Fernández Amador
 ;          Aitor Arnaiz del Val
 ;
@@ -8,11 +9,12 @@
 ; DEFINICION DEL SEGMENTO DE DATOS
 DATOS SEGMENT
 	linefeed db 13, 10, "$"
-	msg db "MENSAJEACODIFICAR$"
-	cmsg db "ASBGOXSOQCRWTWQOF$"
+	info db "Pareja 11: N = 11 + 3 = 14$"
 	text1 db "Mensaje original:$"
 	text2 db "Codificacion del mensaje:$"
 	text3 db "Reversion de la codificacion:$"
+	msg db "MENSAJEACODIFICAR$" ; Mensaje a codificar
+	cmsg db "ASBGOXSOQCRWTWQOF$" ; Mensaje a decodificar
 DATOS ENDS
 ;_______________________________________________________________
 ; DEFINICION DEL SEGMENTO DE PILA
@@ -39,6 +41,12 @@ START PROC
 
 	; Imprimimos informacion por pantalla
 	mov ah, 9
+	mov dx, offset info
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset linefeed
+	int 21h
 	mov dx, offset text1
 	int 21h
 	mov dx, offset linefeed
@@ -54,11 +62,12 @@ START PROC
 	mov dx, offset linefeed
 	int 21h
 	
-	; Preparamos la llamada a la rutina de codificacion
+	; Llamada a la rutina de codificacion
 	mov ah, 11h
 	mov dx, offset msg
 	int 60h
-	; Imprimimos salto de linea
+	
+	; Imprimimos saltos de linea
 	mov ah, 9
 	mov dx, offset linefeed
 	int 21h
@@ -72,14 +81,14 @@ START PROC
 	mov dx, offset linefeed
 	int 21h
 	
-	; Preparamos la llamada a la rutina de codificacion
+	; Llamada a la rutina de decodificacion
 	mov ah, 12h
 	mov dx, offset cmsg
 	int 60h
 	
 	;FIN DEL PROGRAMA
-	MOV AX, 4C00H
-	INT 21H
+	mov ax, 4C00h
+	int 21h
 START ENDP
 ;FIN DEL SEGMENTO DE CODIGO
 CODE ENDS
