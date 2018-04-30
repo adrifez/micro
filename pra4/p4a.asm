@@ -4,156 +4,120 @@ code segment
 	org 100h
 	
 driver_start:
-	push ax
-	mov ax, es:[80h]
-	cmp ax, 0h
-	je estado
+	; Comprobamos los argumentos de entrada
+	mov al, es:[80h]
+	cmp al, 0h
+	jne compr_err
 	
-	cmp ax, 3h
-	je erro
+	mov ah, 9	
+	mov dx, offset instr1
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset instr2
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset instr3
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset msg_grupo1
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset msg_grupo2
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset linefeed
+	int 21h
 	
-	mov ax, es:[82h]
-	cmp ax, '/'
-	jne erro
+	push es
+	xor ax, ax
+	mov es, ax
+	mov ax, es:[60h*4]
+	pop es
+	cmp ax, offset interfaz
+	je installed
+	jmp not_installed
 	
-	mov ax, es:[83h]
-	cmp ax, 'I'
-	je instalar
+installed:
+	mov ah, 9
+	mov dx, offset msg_inst
+	int 21h
+	jmp fin
 	
-	cmp ax, 'D'
+not_installed:
+	mov ah, 9
+	mov dx, offset msg_noinst
+	int 21h
+	jmp fin
+	
+compr_err:
+	cmp al, 3h
+	jg fin
+	mov al, es:[82h]
+	cmp al, '/'
+	jne fin
+	
+install:
+	mov al, es:[83h]
+	cmp al, 'I'
+	jne uninstall
+	jmp instalar
+	
+uninstall:
+	cmp al, 'D'
+	jne fin
 	mov ax, 0100h
 	int 60h
 	
-	jmp erro
+fin:
+	ret
 	
-;Variables del driver
-	msg_instruccion db " Introduzca /I si quiere instalar el driver, /D si quiere desinstalarlo o ningun argumento si quiere ver el estado de instalacion del mismo $"
-	msg_instalado db " El driver esta instalado $"
-	msg_no_instalado db " El driver NO esta instalado $"
-	msg_grupo db " Grupo 2301, Pareja 11, Adrian Fernandez Amador y Aitor Arnaiz del Val ", 0
+	;Variables del driver
 	old_60h dw 0,0
 	N db 14
-	buff db 30 dup (?)	
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;	
-estado proc
-	mov ah, 9	
-	mov dx, offset msg_instruccion
-	int 21h
-	
-	mov ah, 9	
-	mov dx, offset msg_grupo
-	int 21h
-	
-	mov ax, 0000h
-	int 60h
-	
-	cmp ax, 0ABCDh
-	je installed
-	jne not_installed
-	
-installed: mov ah, 9
-	mov dx, offset msg_instalado
-	int 21h
-	jmp fin3
-	
-not_installed: mov ah, 9
-	mov dx, offset msg_no_instalado
-	int 21h
-	ret
-fin3:	
-estado endp	 
-
-erro proc
-	mov ah, 9	
-	mov dx, offset msg_instruccion
-	int 21h
-	ret
-erro endp	
-
-;Funcion que instala el driver
-instalar proc
-	xor ax,ax
-	mov es,ax
-	
-	cli
-	
-	mov ax,es:[60h*4]
-	mov old_60h,ax
-	mov ax,es:[60h*4+2]
-	mov old_60h+2,ax
-	
-	mov es:[60h*4],offset interfaz
-	mov es:[60h*4+2],cs
-	
-	sti
-	
-	mov dx,offset instalar
-	int 27h
-instalar endp
-
-jmp finale1
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	buff db 30 dup (?)
+	linefeed db 13, 10, "$"
+	instr1 db " /I si quiere instalar el driver$"
+	instr2 db " /D si quiere desinstalarlo$"
+	instr3 db " Nada para comprobar el estado de instalacion$"
+	msg_grupo1 db " Grupo 2301, Pareja 11$"
+	msg_grupo2 db " Adrian Fernandez Amador y Aitor Arnaiz del Val$"
+	msg_inst db " El driver esta instalado$"
+	msg_noinst db " El driver NO esta instalado$"
 
 ;Interfaz con el prog. residente
 interfaz proc
-	cmp ah,00h
+	cmp ah, 00h
 	jne desinst
 	call detectar
-	jmp fin
+	jmp driver_fin
 desinst:
-	cmp ah,01h
+	cmp ah, 01h
 	jne stringtocesar
 	call desinstalar
-	jmp fin
+	jmp driver_fin
 stringtocesar:
-	cmp ah,11h
+	cmp ah, 11h
 	jne cesartostring
 	call strtoces
+	jmp driver_fin
 cesartostring:
-	cmp ah,12h
-	jne fin
+	cmp ah, 12h
+	jne driver_fin
 	call cestostr
-fin:
+driver_fin:
 	iret
 interfaz endp
 
-
 ;Rutinas del programa residente
-finale1: jmp finale2
-;Funcion que desinstala el driver
-desinstalar proc
-	push ax
-	push es
-	xor ax,ax
-	mov es,ax
-	
-	cli
-	
-	;Vector 60h
-	mov ax,old_60h
-	mov es:[60h*4],ax
-	mov ax,old_60h+2
-	mov es:[60h*4+2],ax
-	
-	sti
-	
-	mov es,cs:[2ch]
-	mov ah,49h
-	int 21h
-	
-	mov ax,cs
-	mov es,ax
-	mov ah,49h
-	int 21h
-	
-	pop es
-	pop ax
-	ret
-desinstalar endp
 
-finale2: jmp finale3
-
+; String to cesar
 strtoces proc
 	; Guardamos los registros en la pila
 	push si ax bx
@@ -186,8 +150,7 @@ fin1:
 	ret
 strtoces endp
 
-finale3: jmp finale4
-
+; Cesar to string
 cestostr proc
 	; Guardamos los registros en la pila
 	push si ax bx
@@ -220,14 +183,62 @@ fin2:
 	ret
 cestostr endp
 
-;detectar si el driver esta instalado
+; Detecta si el driver esta instalado
 detectar proc
 	mov ax, 0ABCDh
 	ret
-detectar endp	
+detectar endp
 
-finale4: 
+; Funcion que desinstala el driver
+desinstalar proc
+	push ax
+	push es
+	xor ax, ax
+	mov es, ax
+	
+	cli
+	
+	;Vector 60h
+	mov ax, old_60h
+	mov es:[60h*4], ax
+	mov ax, old_60h+2
+	mov es:[60h*4+2], ax
+	
+	sti
+	
+	mov es, cs:[2ch]
+	mov ah, 49h
+	int 21h
+	
+	mov ax, cs
+	mov es, ax
+	mov ah, 49h
+	int 21h
+	
+	pop es
+	pop ax
+	ret
+desinstalar endp
 
-
+;Funcion que instala el driver
+instalar proc
+	xor ax,ax
+	mov es,ax
+	
+	cli
+	
+	mov ax, es:[60h*4]
+	mov old_60h, ax
+	mov ax, es:[60h*4+2]
+	mov old_60h+2, ax
+	
+	mov es:[60h*4], offset interfaz
+	mov es:[60h*4+2], cs
+	
+	sti
+	
+	mov dx, offset instalar
+	int 27h
+instalar endp
 code ends
 end driver_start
