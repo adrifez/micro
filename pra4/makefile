@@ -12,6 +12,12 @@ p4b.exe: p4b.obj
 p4b.obj: p4b.asm 
 	tasm /zi p4b.asm,,p4b.lst
 
+p4c.exe: p4b.obj
+	tlink /v p4c
+	
+p4c.obj: p4b.asm 
+	tasm /zi p4c.asm,,p4c.lst	
+	
 clean:
 	del p4a.obj
 	del	p4a.map
@@ -21,3 +27,7 @@ clean:
 	del p4b.map
 	del p4b.lst
 	del p4b.exe
+	del p4c.obj
+	del p4c.map
+	del p4c.lst
+	del p4c.exe
