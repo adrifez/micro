@@ -8,10 +8,9 @@
 ; DEFINICION DEL SEGMENTO DE DATOS
 DATOS SEGMENT
 	linefeed db 13, 10, "$"
-	primera db "hola"
-	segunda db "que"
-	tercera db "tal"
-	cuarta db "estas"
+	text1 db "Mensaje original: $"
+	text2 db "Mensaje codificado: $"
+	msg db "MENSAJEACODIFICAR$" ; Mensaje a codificar
 DATOS ENDS
 ;_______________________________________________________________
 ; DEFINICION DEL SEGMENTO DE PILA
@@ -38,7 +37,7 @@ confRTC PROC FAR
 	
 	; FIJAR LA FRECUENCIA
 	out 70h, al ; Accede a registro 0Ah
-	mov al, 00101111b ; DV=010b, RS=1111b (15 == 2 Hz), no se como poner 16 para que sea 1 Hz
+	mov al, 00101111b ; DV=010b, RS=1111b (15 == 2 Hz)
 	out 71h, al ; Escribe registro 0Ah
 	
 	
@@ -57,23 +56,34 @@ confRTC PROC FAR
 	ret
 confRTC ENDP
 
+;_______________________________________________________________
+; COMIENZO DEL PROCEDIMIENTO PRINCIPAL (START)
+START PROC
+	; Inicializacion de segmentos
+	mov ax, DATOS
+	mov ds, ax
+	mov ax, EXTRA
+	mov es, ax
+	
+	; Imprimimos informacion
+	mov ah, 9
+	mov dx, offset text1
+	int 21h
+	mov dx, offset msg
+	int 21h
+	mov dx, offset linefeed
+	int 21h
+	mov dx, offset text2
+	int 21h
 
-;rutina de servicio a la interrupcion
-RTC_rsi PROC FAR
-sti
-push ax
-mov al, 0Ch
-out 70h, al ; Accede a registro 0Ch de RTC
-in al, 71h ; Lee registro 0Ch de RTC
-…..
-final: ; Envía EOIs (RTC)
-mov al, 20h
-out 20h, al ; Master PIC
-out 0A0h, al ; Slave PIC
-pop ax
-iret
-RTC_rsi ENDP
-
+	; Preparamos la interrupcion
+	mov dx, offset msg
+	call confRTC
+	
+	;FIN DEL PROGRAMA
+	mov ax, 4C00h
+	int 21h
+START ENDP
 
 CODE ENDS
-end confRTC
+END START

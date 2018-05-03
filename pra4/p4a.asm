@@ -101,8 +101,12 @@ fin:
 	
 	;Variables del driver
 	old_60h dw 0,0
+	old_70h dw 0,0
 	N db 14
 	buff db 30 dup (?)
+	par db 0
+	cont_cod dw 0
+	cont_dec dw 0
 	linefeed db 13, 10, "$"
 	instr1 db " /I si quiere instalar el driver$"
 	instr2 db " /D si quiere desinstalarlo$"
@@ -143,12 +147,32 @@ driver_fin:
 interfaz endp
 
 
+; Interfaz de rtc
+interfaz_rtc proc
+	; Ejecutamos el codigo cada dos interrupciones
+	cmp par, 2
+	jne rtc_fin
+	
+	; Reiniciamos el contador de dos interrupciones
+	push ax
+	mov al, 0h
+	mov par, al
+	pop ax
+	
+	; Llamamos a strtocescar
+	call strtocescar
+rtc_fin:
+	; Fin de interrupcion
+	iret
+interfaz_rtc endp
+
+
 ;Rutinas del programa residente
 
 ; String to cesar
 strtoces proc
 	; Guardamos los registros en la pila
-	push ds si ax bx
+	push ds si ax bx dx
 	; Inicializamos
 	mov si, dx
 	mov dx, offset buff
@@ -184,7 +208,7 @@ fin1:
 	mov ah, 9
 	int 21h
 	; Recuperamos los registros de la pila
-	pop bx ax si ds
+	pop dx bx ax si ds
 	ret
 strtoces endp
 
@@ -192,7 +216,7 @@ strtoces endp
 ; Cesar to string
 cestostr proc
 	; Guardamos los registros en la pila
-	push ds si ax bx
+	push ds si ax bx dx
 	; Inicializamos
 	mov si, dx
 	mov dx, offset buff
@@ -229,9 +253,49 @@ fin2:
 	mov ah, 9
 	int 21h
 	; Recuperamos los registros de la pila
-	pop bx ax si ds
+	pop dx bx ax si ds
 	ret
 cestostr endp
+
+
+; String to cesar
+strtocescar proc
+	; Guardamos los registros en la pila
+	push ds si ax
+	; Inicializamos
+	mov si, dx
+	add si, cont_cod
+	mov dx, offset buff
+	
+	mov al, ds:[si]
+	cmp al, '$'
+	je final
+	
+	cmp al, 'Z'
+	jle continua
+	sub al, 26
+	
+continua:
+	; Guardamos el caracter para imprimirlo
+	mov buff[0], al
+	mov buff[1], '$'
+	; Actualizamos el contador
+	mov ax, cont_cod
+	inc ax
+	mov cont_cod, ax
+	; Imprimimos el resultado
+	mov ax, cs
+	mov ds, ax
+	mov ah, 9
+	int 21h
+final:
+	mov al, 20h
+	out 20h, al ; Master PIC
+	out 0A0h, al ; Slave PIC
+	; Recuperamos los registros de la pila
+	pop bx ax si ds
+	ret
+strtocescar endp
 
 
 ; Detecta si el driver esta instalado
@@ -255,6 +319,12 @@ desinstalar proc
 	mov es:[60h*4], ax
 	mov ax, old_60h+2
 	mov es:[60h*4+2], ax
+	
+	;Vector 70h
+	mov ax, old_70h
+	mov es:[70h*4], ax
+	mov ax, old_70h+2
+	mov es:[70h*4+2], ax
 	
 	sti
 	
@@ -287,6 +357,14 @@ instalar proc
 	
 	mov es:[60h*4], offset interfaz
 	mov es:[60h*4+2], cs
+	
+	mov ax, es:[70h*4]
+	mov old_70h, ax
+	mov ax, es:[70h*4+2]
+	mov old_70h+2, ax
+	
+	mov es:[70h*4], offset interfaz_rtc
+	mov es:[70h*4+2], cs
 	
 	sti
 	
